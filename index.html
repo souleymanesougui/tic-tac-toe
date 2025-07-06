@@ -5,7 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 <title>Tic Tac Toe Responsive & Stylé</title>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+<!-- PWA manifest -->
+<link rel="manifest" href="manifest.json" />
+<meta name="theme-color" content="#3b82f6" />
+
 <style>
+  /* Ton CSS complet ici (le même que tu as donné) */
   * {
     box-sizing: border-box;
     margin: 0; padding: 0;
@@ -388,5 +394,15 @@
     line.style.display = "block";
   }
 </script>
+
+<!-- PWA service worker -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service Worker enregistré'))
+      .catch(err => console.error('Erreur Service Worker:', err));
+  }
+</script>
+
 </body>
 </html>
