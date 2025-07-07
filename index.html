@@ -52,6 +52,7 @@
       font-size: 16px;
       background: rgba(255 255 255 / 0.15);
       color: #fff;
+<<<<<<< HEAD
     }
     .input-group input::placeholder { color: #ccc; }
     .input-group input:focus {
@@ -70,6 +71,26 @@
       cursor: pointer;
       box-shadow: 0 5px 15px rgba(59 130 246 / 50%);
     }
+=======
+    }
+    .input-group input::placeholder { color: #ccc; }
+    .input-group input:focus {
+      background: rgba(255 255 255 / 0.3);
+      box-shadow: 0 0 8px #3b82f6;
+    }
+    #startBtn {
+      width: 100%;
+      padding: 14px 0;
+      border-radius: 20px;
+      border: none;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #fff;
+      background: linear-gradient(90deg, #3b82f6 0%, #ef4444 100%);
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(59 130 246 / 50%);
+    }
+>>>>>>> 61f404956590d1f2c55c24ae07c71154134db9db
     #startBtn:hover {
       box-shadow: 0 8px 25px rgba(239 68 68 / 80%);
       transform: scale(1.05);
@@ -170,6 +191,7 @@
   </style>
 </head>
 <audio id="backgroundMusic" loop>
+<<<<<<< HEAD
   <source src="musique.mp3.mp3" type="audio/mpeg" />
 </audio>
 <body>
@@ -273,6 +295,67 @@ function playMusic() {
       [0,4,8],[2,4,6]
     ];
 
+=======
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+</audio>
+<body>
+  <div class="container">
+    <div id="welcome">Souleymane Sougui Idriss vous remercie d’avoir essayé son jeu 🎉</div>
+    <div id="playerInput">
+      <div class="input-group">
+        <input type="text" id="playerX" placeholder="Nom joueur X" />
+        <input type="text" id="playerO" placeholder="Nom joueur O" />
+      </div>
+      <button id="startBtn">Commencez</button>
+      <div id="errorMsg"></div>
+    </div>
+
+    <div id="game">
+      <div id="board">
+        <div class="cell" data-index="0"></div>
+        <div class="cell" data-index="1"></div>
+        <div class="cell" data-index="2"></div>
+        <div class="cell" data-index="3"></div>
+        <div class="cell" data-index="4"></div>
+        <div class="cell" data-index="5"></div>
+        <div class="cell" data-index="6"></div>
+        <div class="cell" data-index="7"></div>
+        <div class="cell" data-index="8"></div>
+      </div>
+      <div id="line"></div>
+      <div id="result"></div>
+      <button id="restartBtn">Recommencer</button>
+      <button id="changeNamesBtn">Changer les noms</button>
+      <button id="infoBtn">Plus d'infos</button>
+    </div>
+  </div>
+
+  <script>
+    const startBtn = document.getElementById("startBtn");
+    const playerXInput = document.getElementById("playerX");
+    const playerOInput = document.getElementById("playerO");
+    const playerInputDiv = document.getElementById("playerInput");
+    const welcomeDiv = document.getElementById("welcome");
+    const gameDiv = document.getElementById("game");
+    const board = document.getElementById("board");
+    const cells = [...document.querySelectorAll(".cell")];
+    const resultDiv = document.getElementById("result");
+    const restartBtn = document.getElementById("restartBtn");
+    const changeNamesBtn = document.getElementById("changeNamesBtn");
+    const infoBtn = document.getElementById("infoBtn");
+    const line = document.getElementById("line");
+    const errorMsg = document.getElementById("errorMsg");
+
+    let playerXName = "", playerOName = "", boardState = Array(9).fill(null);
+    let currentPlayer = "X", gameOver = false, winningLine = null;
+
+    const winningLines = [
+      [0,1,2],[3,4,5],[6,7,8],
+      [0,3,6],[1,4,7],[2,5,8],
+      [0,4,8],[2,4,6]
+    ];
+
+>>>>>>> 61f404956590d1f2c55c24ae07c71154134db9db
     startBtn.onclick = () => {
       const x = playerXInput.value.trim();
       const o = playerOInput.value.trim();
