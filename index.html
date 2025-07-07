@@ -382,5 +382,23 @@
         .catch(err => console.error('Erreur Service Worker:', err));
     }
   </script>
+  <script>
+  window.addEventListener('load', () => {
+    const audio = document.getElementById('backgroundMusic');
+    audio.volume = 0.3; // volume bas pour ne pas gêner
+    // Essayer de jouer la musique
+    audio.play().catch(() => {
+      // si bloqué, attendre le premier clic pour lancer la musique
+      const playOnUserInteraction = () => {
+        audio.play();
+        window.removeEventListener('click', playOnUserInteraction);
+        window.removeEventListener('keydown', playOnUserInteraction);
+      };
+      window.addEventListener('click', playOnUserInteraction);
+      window.addEventListener('keydown', playOnUserInteraction);
+    });
+  });
+</script>
+
 </body>
 </html>
