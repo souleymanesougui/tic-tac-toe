@@ -11,7 +11,6 @@
 <meta name="theme-color" content="#3b82f6" />
 
 <style>
-  /* Ton CSS complet ici (le même que tu as donné) */
   * {
     box-sizing: border-box;
     margin: 0; padding: 0;
@@ -160,8 +159,6 @@
     box-shadow: 0 9px 30px rgb(16 185 129 / 80%);
     transform: scale(1.05);
   }
-  
-  /* Nouveau bouton changer les noms */
   #changeNamesBtn {
     margin-top: 10px;
     background: #f59e0b;
@@ -180,8 +177,6 @@
     box-shadow: 0 9px 30px rgba(245, 158, 11, 0.8);
     transform: scale(1.05);
   }
-
-  /* Ligne gagnante stylée */
   #line {
     position: absolute;
     background: linear-gradient(90deg, #3b82f6, #ef4444);
@@ -194,8 +189,6 @@
     transition: opacity 0.4s ease;
     z-index: 10;
   }
-
-  /* Responsive */
   @media (max-width: 420px) {
     .container {
       max-width: 100vw;
@@ -394,8 +387,6 @@
     line.style.display = "block";
   }
 </script>
-
-<!-- PWA service worker -->
 <script>
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('service-worker.js')
