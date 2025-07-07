@@ -169,6 +169,9 @@
     }
   </style>
 </head>
+<audio id="backgroundMusic" loop>
+  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg" />
+</audio>
 <body>
   <div class="container">
     <div id="welcome">Souleymane Sougui Idriss vous remercie d’avoir essayé son jeu 🎉</div>
@@ -239,6 +242,7 @@
       playerInputDiv.style.display = "none";
       welcomeDiv.style.display = "none";
       gameDiv.style.display = "block";
+      document.getElementById("backgroundMusic").play();
       resetGame();
     };
 
