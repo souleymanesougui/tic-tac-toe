@@ -188,6 +188,7 @@
       <button onclick="playMusic()" style="width: 100%; padding: 8px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">
         Rejouer musique
       </button>
+      <button id="infoBtn">Plus d'infos</button>
     </div>
   </div>
 
@@ -217,7 +218,7 @@
       <div id="result"></div>
       <button id="restartBtn">Recommencer</button>
       <button id="changeNamesBtn">Changer les noms</button>
-      <button id="infoBtn">Plus d'infos</button>
+      
     </div>
   </div>
 
@@ -298,7 +299,7 @@
         cell.classList.add(currentPlayer);
         if (checkWin()) {
           gameOver = true;
-          resultDiv.textContent = `🎉 ${currentPlayer === "X" ? playerXName : playerOName} a gagné 🎊`;
+          resultDiv.textContent = `🎉 Féllicitation ${currentPlayer === "X" ? playerXName : playerOName} vous avez gagné 🎊`;
           showLine(winningLine);
           endGame();
           return;
@@ -386,10 +387,9 @@
   <script>
   window.addEventListener('load', () => {
     const audio = document.getElementById('backgroundMusic');
-    audio.volume = 0.3; // volume bas pour ne pas gêner
-    // Essayer de jouer la musique
+    audio.volume = 0.2; 
     audio.play().catch(() => {
-      // si bloqué, attendre le premier clic pour lancer la musique
+      
       const playOnUserInteraction = () => {
         audio.play();
         window.removeEventListener('click', playOnUserInteraction);
