@@ -421,6 +421,14 @@
     });
   });
 </script>
+<script>
+  const volumeSlider = document.getElementById("volumeControl");
+  const music = document.getElementById("backgroundMusic");
+
+  volumeSlider.addEventListener("input", () => {
+    music.volume = volumeSlider.value;
+  });
+</script>
 
 
 </body>
