@@ -145,6 +145,9 @@
     #infoBtn {
       background: #3b82f6;
       box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+      position: fixed;
+      top: 0;
+      right: 0;
     }
     #infoBtn:hover {
       box-shadow: 0 9px 30px rgba(59, 130, 246, 0.8);
@@ -175,7 +178,7 @@
   <audio id="backgroundMusic" loop>
     <source src="musique.mp3.mp3" type="audio/mpeg" />
   </audio>
-
+<button id="infoBtn">Plus d'infos</button>
   <!-- Bouton Option -->
   <div style="position: absolute; top: 15px; left: 15px; z-index: 100;">
     <button onclick="toggleOptions()" style="padding: 10px 20px; border-radius: 10px; background: #3b82f6; color: white; border: none; font-weight: 600; cursor: pointer;">
@@ -188,7 +191,7 @@
       <button onclick="playMusic()" style="width: 100%; padding: 8px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">
         Rejouer musique
       </button>
-      <button id="infoBtn">Plus d'infos</button>
+      
     </div>
   </div>
 
