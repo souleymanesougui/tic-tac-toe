@@ -186,16 +186,19 @@
     <button onclick="toggleOptions()" style="padding: 10px 20px; border-radius: 10px; background: #3b82f6; color: white; border: none; font-weight: 600; cursor: pointer;">
       Option
     </button>
-    <div id="optionsMenu" style="display: none; margin-top: 10px; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px;">
-      <button onclick="pauseMusic()" style="margin-bottom: 5px; width: 100%; padding: 8px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer;">
-        Arrêter musique
-      </button>
-      <button onclick="playMusic()" style="width: 100%; padding: 8px; background: #10b981; color: white; border: none; border-radius: 8px; cursor: pointer;">
-        Rejouer musique
-      </button>
-      <label for="volumeControl" style="color: white;">Volume</label>
-      <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.2" style="width: 100%;">
+    <div id="optionsMenu" style="display: none; margin-top: 10px; background: rgba(0,0,0,0.7); padding: 10px; border-radius: 10px; text-align: center;">
+      <button id="musicToggleBtn" onclick="toggleMusic()" 
+     style="width: 100%; padding: 8px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem;">
+     🎵 Activer Musique
+     </button>
+
+      <div style="margin-top: 10px;">
+       <label for="volumeControl" style="color: white; font-weight: 600; display: block; margin-bottom: 5px;">Volume 🎵</label>
+        <input type="range" id="volumeControl" min="0" max="1" step="0.01" value="0.2" 
+          style="width: 100%; height: 8px; border-radius: 5px; background: #ccc; accent-color: #3b82f6; cursor: pointer;">
+       </div>
     </div>
+
   </div>
 
   <div class="container">
@@ -228,190 +231,194 @@
     </div>
   </div>
 
-  <script>
-    function toggleOptions() {
-      const menu = document.getElementById("optionsMenu");
-      menu.style.display = menu.style.display === "none" ? "block" : "none";
+ <script>
+  function toggleOptions() {
+    const menu = document.getElementById("optionsMenu");
+    menu.style.display = menu.style.display === "none" ? "block" : "none";
+  }
+
+  const startBtn = document.getElementById("startBtn");
+  const playerXInput = document.getElementById("playerX");
+  const playerOInput = document.getElementById("playerO");
+  const playerInputDiv = document.getElementById("playerInput");
+  const welcomeDiv = document.getElementById("welcome");
+  const gameDiv = document.getElementById("game");
+  const board = document.getElementById("board");
+  const cells = [...document.querySelectorAll(".cell")];
+  const resultDiv = document.getElementById("result");
+  const restartBtn = document.getElementById("restartBtn");
+  const changeNamesBtn = document.getElementById("changeNamesBtn");
+  const infoBtn = document.getElementById("infoBtn");
+  const line = document.getElementById("line");
+  const errorMsg = document.getElementById("errorMsg");
+
+  let playerXName = "", playerOName = "", boardState = Array(9).fill(null);
+  let currentPlayer = "X", gameOver = false, winningLine = null;
+
+  const winningLines = [
+    [0,1,2],[3,4,5],[6,7,8],
+    [0,3,6],[1,4,7],[2,5,8],
+    [0,4,8],[2,4,6]
+  ];
+
+  startBtn.onclick = () => {
+    const x = playerXInput.value.trim();
+    const o = playerOInput.value.trim();
+    if (!x || !o) {
+      errorMsg.textContent = "Les deux noms sont obligatoires.";
+      return;
     }
+    playerXName = x;
+    playerOName = o;
+    errorMsg.textContent = "";
+    playerInputDiv.style.display = "none";
+    welcomeDiv.style.display = "none";
+    gameDiv.style.display = "block";
+    document.getElementById("backgroundMusic").play();
+    resetGame();
+  };
 
-    function pauseMusic() {
-      const audio = document.getElementById("backgroundMusic");
-      if (audio) audio.pause();
-    }
+  restartBtn.onclick = resetGame;
 
-    function playMusic() {
-      const audio = document.getElementById("backgroundMusic");
-      if (audio) audio.play();
-    }
+  changeNamesBtn.onclick = () => {
+    gameDiv.style.display = "none";
+    playerInputDiv.style.display = "block";
+    welcomeDiv.style.display = "block";
+    restartBtn.style.display = "none";
+    changeNamesBtn.style.display = "none";
+  };
 
-    const startBtn = document.getElementById("startBtn");
-    const playerXInput = document.getElementById("playerX");
-    const playerOInput = document.getElementById("playerO");
-    const playerInputDiv = document.getElementById("playerInput");
-    const welcomeDiv = document.getElementById("welcome");
-    const gameDiv = document.getElementById("game");
-    const board = document.getElementById("board");
-    const cells = [...document.querySelectorAll(".cell")];
-    const resultDiv = document.getElementById("result");
-    const restartBtn = document.getElementById("restartBtn");
-    const changeNamesBtn = document.getElementById("changeNamesBtn");
-    const infoBtn = document.getElementById("infoBtn");
-    const line = document.getElementById("line");
-    const errorMsg = document.getElementById("errorMsg");
-
-    let playerXName = "", playerOName = "", boardState = Array(9).fill(null);
-    let currentPlayer = "X", gameOver = false, winningLine = null;
-
-    const winningLines = [
-      [0,1,2],[3,4,5],[6,7,8],
-      [0,3,6],[1,4,7],[2,5,8],
-      [0,4,8],[2,4,6]
-    ];
-
-    startBtn.onclick = () => {
-      const x = playerXInput.value.trim();
-      const o = playerOInput.value.trim();
-      if (!x || !o) {
-        errorMsg.textContent = "Les deux noms sont obligatoires.";
+  cells.forEach(cell => {
+    cell.onclick = () => {
+      if (gameOver) return;
+      const idx = cell.dataset.index;
+      if (boardState[idx]) return;
+      boardState[idx] = currentPlayer;
+      cell.textContent = currentPlayer;
+      cell.classList.add(currentPlayer);
+      if (checkWin()) {
+        gameOver = true;
+        resultDiv.textContent = `🎉 Féllicitation ${currentPlayer === "X" ? playerXName : playerOName} vous avez gagné 🎊`;
+        showLine(winningLine);
+        endGame();
         return;
       }
-      playerXName = x;
-      playerOName = o;
-      errorMsg.textContent = "";
-      playerInputDiv.style.display = "none";
-      welcomeDiv.style.display = "none";
-      gameDiv.style.display = "block";
-      document.getElementById("backgroundMusic").play();
-      resetGame();
-    };
-
-    restartBtn.onclick = resetGame;
-
-    changeNamesBtn.onclick = () => {
-      gameDiv.style.display = "none";
-      playerInputDiv.style.display = "block";
-      welcomeDiv.style.display = "block";
-      restartBtn.style.display = "none";
-      changeNamesBtn.style.display = "none";
-    };
-
-    cells.forEach(cell => {
-      cell.onclick = () => {
-        if (gameOver) return;
-        const idx = cell.dataset.index;
-        if (boardState[idx]) return;
-        boardState[idx] = currentPlayer;
-        cell.textContent = currentPlayer;
-        cell.classList.add(currentPlayer);
-        if (checkWin()) {
-          gameOver = true;
-          resultDiv.textContent = `🎉 Féllicitation ${currentPlayer === "X" ? playerXName : playerOName} vous avez gagné 🎊`;
-          showLine(winningLine);
-          endGame();
-          return;
-        }
-        if (boardState.every(Boolean)) {
-          gameOver = true;
-          resultDiv.textContent = "Match nul 🤝";
-          endGame();
-          return;
-        }
-        currentPlayer = currentPlayer === "X" ? "O" : "X";
-        resultDiv.textContent = `Au tour : ${currentPlayer === "X" ? playerXName : playerOName}`;
-      };
-    });
-
-    infoBtn.onclick = () => {
-      alert(
-        "🎮 Jeu de Morpion\n" +
-        "👨‍💻 Développé par : Souleymane Sougui Idriss\n" +
-        "📅 Date : Juillet 2025\n" +
-        "💡 Description : Ce jeu permet à deux joueurs de s'affronter au morpion.\n" +
-        "📱 Optimisé pour mobile et ordinateur.\n\n" +
-        "Merci d'avoir joué 🎉🎊 !"
-      );
-    };
-
-    function checkWin() {
-      for (let combo of winningLines) {
-        const [a, b, c] = combo;
-        if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
-          winningLine = combo;
-          return true;
-        }
+      if (boardState.every(Boolean)) {
+        gameOver = true;
+        resultDiv.textContent = "Match nul 🤝";
+        endGame();
+        return;
       }
-      return false;
-    }
-
-    function endGame() {
-      cells.forEach(cell => cell.style.pointerEvents = "none");
-      restartBtn.style.display = "inline-block";
-      changeNamesBtn.style.display = "inline-block";
-      infoBtn.style.display = "inline-block";
-    }
-
-    function resetGame() {
-      boardState.fill(null);
-      currentPlayer = "X";
-      gameOver = false;
-      winningLine = null;
-      resultDiv.textContent = `${playerXName} commence`;
-      restartBtn.style.display = "none";
-      changeNamesBtn.style.display = "none";
-      line.style.display = "none";
-      cells.forEach(cell => {
-        cell.textContent = "";
-        cell.className = "cell";
-        cell.style.pointerEvents = "auto";
-      });
-    }
-
-    function showLine([a, b, c]) {
-      const rectA = cells[a];
-      const rectC = cells[c];
-      const x1 = rectA.offsetLeft + rectA.offsetWidth / 2;
-      const y1 = rectA.offsetTop + rectA.offsetHeight / 2;
-      const x2 = rectC.offsetLeft + rectC.offsetWidth / 2;
-      const y2 = rectC.offsetTop + rectC.offsetHeight / 2;
-      const length = Math.hypot(x2 - x1, y2 - y1);
-      const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
-      line.style.width = length + "px";
-      line.style.left = x1 + "px";
-      line.style.top = y1 + "px";
-      line.style.transform = `rotate(${angle}deg)`;
-      line.style.display = "block";
-    }
-  </script>
-
-  <script>
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js')
-        .then(() => console.log('Service Worker enregistré'))
-        .catch(err => console.error('Erreur Service Worker:', err));
-    }
-  </script>
-  <script>
-  window.addEventListener('load', () => {
-    const audio = document.getElementById('backgroundMusic');
-    audio.volume = 0.2; 
-    audio.play().catch(() => {
-      
-      const playOnUserInteraction = () => {
-        audio.play();
-        window.removeEventListener('click', playOnUserInteraction);
-        window.removeEventListener('keydown', playOnUserInteraction);
-      };
-      window.addEventListener('click', playOnUserInteraction);
-      window.addEventListener('keydown', playOnUserInteraction);
-    });
+      currentPlayer = currentPlayer === "X" ? "O" : "X";
+      resultDiv.textContent = `Au tour : ${currentPlayer === "X" ? playerXName : playerOName}`;
+    };
   });
-</script>
-<script>
-  const volumeSlider = document.getElementById("volumeControl");
-  const music = document.getElementById("backgroundMusic");
 
-  volumeSlider.addEventListener("input", () => {
+  infoBtn.onclick = () => {
+    alert(
+      "🎮 Jeu de Morpion\n" +
+      "👨‍💻 Développé par : Souleymane Sougui Idriss\n" +
+      "📅 Date : Juillet 2025\n" +
+      "💡 Description : Ce jeu permet à deux joueurs de s'affronter au morpion.\n" +
+      "📱 Optimisé pour mobile et ordinateur.\n\n" +
+      "Merci d'avoir joué 🎉🎊 !"
+    );
+  };
+
+  function checkWin() {
+    for (let combo of winningLines) {
+      const [a, b, c] = combo;
+      if (boardState[a] && boardState[a] === boardState[b] && boardState[a] === boardState[c]) {
+        winningLine = combo;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function endGame() {
+    cells.forEach(cell => cell.style.pointerEvents = "none");
+    restartBtn.style.display = "inline-block";
+    changeNamesBtn.style.display = "inline-block";
+    infoBtn.style.display = "inline-block";
+  }
+
+  function resetGame() {
+    boardState.fill(null);
+    currentPlayer = "X";
+    gameOver = false;
+    winningLine = null;
+    resultDiv.textContent = `${playerXName} commence`;
+    restartBtn.style.display = "none";
+    changeNamesBtn.style.display = "none";
+    line.style.display = "none";
+    cells.forEach(cell => {
+      cell.textContent = "";
+      cell.className = "cell";
+      cell.style.pointerEvents = "auto";
+    });
+  }
+
+  function showLine([a, b, c]) {
+    const rectA = cells[a];
+    const rectC = cells[c];
+    const x1 = rectA.offsetLeft + rectA.offsetWidth / 2;
+    const y1 = rectA.offsetTop + rectA.offsetHeight / 2;
+    const x2 = rectC.offsetLeft + rectC.offsetWidth / 2;
+    const y2 = rectC.offsetTop + rectC.offsetHeight / 2;
+    const length = Math.hypot(x2 - x1, y2 - y1);
+    const angle = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+    line.style.width = length + "px";
+    line.style.left = x1 + "px";
+    line.style.top = y1 + "px";
+    line.style.transform = `rotate(${angle}deg)`;
+    line.style.display = "block";
+  }
+</script>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+      .then(() => console.log('Service Worker enregistré'))
+      .catch(err => console.error('Erreur Service Worker:', err));
+  }
+</script>
+
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    const music = document.getElementById("backgroundMusic");
+    const volumeSlider = document.getElementById("volumeControl");
+    const toggleBtn = document.getElementById("musicToggleBtn");
+
+    // Volume initial
     music.volume = volumeSlider.value;
+
+    // Contrôle du volume
+    volumeSlider.addEventListener("input", () => {
+      music.volume = volumeSlider.value;
+    });
+
+    // Bouton toggle musique
+    window.toggleMusic = function () {
+      if (music.paused) {
+        music.play();
+        toggleBtn.innerHTML = "🔇 Couper Musique";
+      } else {
+        music.pause();
+        toggleBtn.innerHTML = "🎵 Activer Musique";
+      }
+    };
+
+    // Lecture automatique avec sécurité
+    music.play().catch(() => {
+      const startOnUserAction = () => {
+        music.play();
+        window.removeEventListener('click', startOnUserAction);
+        window.removeEventListener('keydown', startOnUserAction);
+      };
+      window.addEventListener('click', startOnUserAction);
+      window.addEventListener('keydown', startOnUserAction);
+    });
   });
 </script>
 
