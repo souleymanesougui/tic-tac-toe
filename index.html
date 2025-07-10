@@ -204,11 +204,14 @@
   <div class="container">
     <div id="welcome">Souleymane Sougui Idriss vous remercie d’avoir essayé son jeu </div>
     <div id="playerInput">
-      <div class="input-group">
-        <input type="text" id="playerX" placeholder="                joueur X" />
-        <input type="text" id="playerO" placeholder="              joueur O" />
-      </div>
-      <button id="startBtn">Commencez</button>
+      <form id="playerForm">
+        <div class="input-group">
+          <input type="text" name="joueur1" id="playerX" placeholder="joueur X" required />
+          <input type="text" name="joueur2" id="playerO" placeholder="joueur O" required />
+        </div>
+        <button type="submit" id="startBtn">Commencez</button>
+      </form>
+
       <div id="errorMsg"></div>
     </div>
     <div id="game">
@@ -261,22 +264,35 @@
     [0,4,8],[2,4,6]
   ];
 
-  startBtn.onclick = () => {
-    const x = playerXInput.value.trim();
-    const o = playerOInput.value.trim();
-    if (!x || !o) {
-      errorMsg.textContent = "Les deux noms sont obligatoires.";
-      return;
-    }
-    playerXName = x;
-    playerOName = o;
-    errorMsg.textContent = "";
-    playerInputDiv.style.display = "none";
-    welcomeDiv.style.display = "none";
-    gameDiv.style.display = "block";
-    document.getElementById("backgroundMusic").play();
-    resetGame();
-  };
+  const playerForm = document.getElementById("playerForm");
+
+playerForm.onsubmit = (e) => {
+  e.preventDefault(); // empêche la page de recharger
+
+  const x = playerXInput.value.trim();
+  const o = playerOInput.value.trim();
+  if (!x || !o) {
+    errorMsg.textContent = "Les deux noms sont obligatoires.";
+    return;
+  }
+
+  // envoyer les noms vers le PHP
+  const xhr = new XMLHttpRequest();
+  xhr.open("POST", "sauver-noms.php", true);
+  xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+  xhr.send(`joueur1=${encodeURIComponent(x)}&joueur2=${encodeURIComponent(o)}`);
+
+  // démarrer le jeu
+  playerXName = x;
+  playerOName = o;
+  errorMsg.textContent = "";
+  playerInputDiv.style.display = "none";
+  welcomeDiv.style.display = "none";
+  gameDiv.style.display = "block";
+  document.getElementById("backgroundMusic").play();
+  resetGame();
+};
+
 
   restartBtn.onclick = resetGame;
 
